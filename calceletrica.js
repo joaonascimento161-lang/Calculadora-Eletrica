@@ -1,5 +1,5 @@
 /*pedir o nome do eletrodoméstico, se vai usar wat ou kwh, saida nome, kwh por mes , valor em real*/
-let precoKw = 0.9; // Preço do Kwh em reais.
+let precoKw = parseFloat(prompt("Digite o preço da sua região do Kwh: ")); // Preço do Kwh em reais.
 let eletrodomestico = prompt("Digite o nome do seu eletrodomestico: ");
 let potencia = Number(prompt("Informe a potência 1 - Watts ou 2 - Kw: "));
 let tempo = parseInt(prompt("Digite o tempo de uso do seu eletrodomestico por dia (em horas): "));

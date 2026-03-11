@@ -3,180 +3,155 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Calculadora de Resistor</title>
+    <title>Calculadora de Resistor Pro</title>
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            padding: 20px;
-            background-color: #f4f4f4;
-        }
-
-        .container {
-            max-width: 500px;
-            margin: 0 auto;
-            background-color: #fff;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-        }
-
-        h2 {
-            text-align: center;
-        }
-
-        select, input {
-            width: 100%;
-            padding: 10px;
-            margin: 10px 0;
-            border-radius: 5px;
-            border: 1px solid #ccc;
-        }
-
-        button {
-            width: 100%;
-            padding: 10px;
-            background-color: #007bff;
-            color: #fff;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 16px;
-        }
-
-        button:hover {
-            background-color: #0056b3;
-        }
-
-        .result {
-            margin-top: 20px;
-            text-align: center;
-            font-size: 20px;
-            font-weight: bold;
-        }
+        :root { --bg-color: #f0f2f5; --resistor-body: #d1b280; }
+        body { font-family: sans-serif; background: var(--bg-color); display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; }
+        .container { background: white; padding: 2rem; border-radius: 15px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); text-align: center; width: 450px; }
+        
+        /* Desenho do Resistor */
+        .resistor-display { display: flex; align-items: center; justify-content: center; margin: 30px 0; }
+        .fio { width: 40px; height: 6px; background-color: #bbb; }
+        .corpo-resistor { width: 200px; height: 60px; background-color: var(--resistor-body); border-radius: 30px; display: flex; justify-content: space-evenly; align-items: center; padding: 0 10px; }
+        .faixa { width: 12px; height: 100%; transition: all 0.3s; }
+        
+        .controles { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; text-align: left; margin-top: 20px; }
+        .campo { display: flex; flex-direction: column; }
+        .hidden { display: none; }
+        
+        .resultado-box { margin-top: 25px; padding: 15px; background: #eef2ff; border-radius: 10px; font-weight: bold; font-size: 1.2rem; color: #2563eb; }
+        select { padding: 8px; border-radius: 5px; border: 1px solid #ccc; margin-top: 5px; }
+        .tab-selector { margin-bottom: 20px; }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <h2>Calculadora de Resistor</h2>
+    <h1>Calculadora de Resistor</h1>
 
-    <label for="faixas">Número de Faixas:</label>
-    <select id="faixas">
-        <option value="4">4 Faixas</option>
-        <option value="5">5 Faixas</option>
-    </select>
+    <div class="tab-selector">
+        <label><input type="radio" name="tipo" value="4" checked onclick="toggleModo(4)"> 4 Faixas</label>
+        <label style="margin-left: 20px;"><input type="radio" name="tipo" value="5" onclick="toggleModo(5)"> 5 Faixas</label>
+    </div>
+    
+    <div class="resistor-display">
+        <div class="fio"></div>
+        <div id="corpo" class="corpo-resistor">
+            <div id="f1" class="faixa"></div>
+            <div id="f2" class="faixa"></div>
+            <div id="f3" class="faixa"></div> <div id="f4" class="faixa"></div>
+            <div id="f5" class="faixa" style="display:none"></div>
+        </div>
+        <div class="fio"></div>
+    </div>
 
-    <label for="faixa1">Cor da Primeira Faixa:</label>
-    <select id="faixa1">
-        <option value="0">Preto</option>
-        <option value="1">Marrom</option>
-        <option value="2">Vermelho</option>
-        <option value="3">Laranja</option>
-        <option value="4">Amarelo</option>
-        <option value="5">Verde</option>
-        <option value="6">Azul</option>
-        <option value="7">Violeta</option>
-        <option value="8">Cinza</option>
-        <option value="9">Branco</option>
-    </select>
+    <div class="controles">
+        <div class="campo">
+            <label>1ª Faixa (Dígito)</label>
+            <select id="sel-f1" onchange="calcular()"></select>
+        </div>
+        <div class="campo">
+            <label>2ª Faixa (Dígito)</label>
+            <select id="sel-f2" onchange="calcular()"></select>
+        </div>
+        <div id="campo-f3" class="campo hidden">
+            <label>3ª Faixa (Dígito)</label>
+            <select id="sel-f3" onchange="calcular()"></select>
+        </div>
+        <div class="campo">
+            <label>Multiplicador</label>
+            <select id="sel-mult" onchange="calcular()"></select>
+        </div>
+        <div class="campo">
+            <label>Tolerância</label>
+            <select id="sel-tol" onchange="calcular()"></select>
+        </div>
+    </div>
 
-    <label for="faixa2">Cor da Segunda Faixa:</label>
-    <select id="faixa2">
-        <option value="0">Preto</option>
-        <option value="1">Marrom</option>
-        <option value="2">Vermelho</option>
-        <option value="3">Laranja</option>
-        <option value="4">Amarelo</option>
-        <option value="5">Verde</option>
-        <option value="6">Azul</option>
-        <option value="7">Violeta</option>
-        <option value="8">Cinza</option>
-        <option value="9">Branco</option>
-    </select>
-
-    <label for="faixa3" id="labelFaixa3" style="display: none;">Cor da Terceira Faixa:</label>
-    <select id="faixa3" style="display: none;">
-        <option value="0">Preto</option>
-        <option value="1">Marrom</option>
-        <option value="2">Vermelho</option>
-        <option value="3">Laranja</option>
-        <option value="4">Amarelo</option>
-        <option value="5">Verde</option>
-        <option value="6">Azul</option>
-        <option value="7">Violeta</option>
-        <option value="8">Cinza</option>
-        <option value="9">Branco</option>
-    </select>
-
-    <label for="multiplicador">Cor do Multiplicador:</label>
-    <select id="multiplicador">
-        <option value="0">Preto</option>
-        <option value="1">Marrom</option>
-        <option value="2">Vermelho</option>
-        <option value="3">Laranja</option>
-        <option value="4">Amarelo</option>
-        <option value="5">Verde</option>
-        <option value="6">Azul</option>
-        <option value="7">Violeta</option>
-        <option value="8">Cinza</option>
-        <option value="9">Branco</option>
-    </select>
-
-    <label for="tolerancia">Cor da Tolerância:</label>
-    <select id="tolerancia">
-        <option value="10">Dourado</option>
-        <option value="11">Prata</option>
-    </select>
-
-    <button onclick="calcularResistor()">Calcular</button>
-
-    <div class="result" id="result"></div>
+    <div class="resultado-box" id="resultado">--- Ω</div>
 </div>
 
 <script>
+    const coresDigitais = [
+        {nome: "Preto", cor: "black", valor: 0}, {nome: "Marrom", cor: "brown", valor: 1},
+        {nome: "Vermelho", cor: "red", valor: 2}, {nome: "Laranja", cor: "orange", valor: 3},
+        {nome: "Amarelo", cor: "yellow", valor: 4}, {nome: "Verde", cor: "green", valor: 5},
+        {nome: "Azul", cor: "blue", valor: 6}, {nome: "Violeta", cor: "violet", valor: 7},
+        {nome: "Cinza", cor: "gray", valor: 8}, {nome: "Branco", cor: "white", valor: 9}
+    ];
 
-    const cores = ["Preto", "Marrom", "Vermelho", "Laranja", "Amarelo", "Verde", "Azul", "Violeta", "Cinza", "Branco"];
-    const tolerancias = ["Dourado", "Prata"];
+    const multiplicadores = [
+        {nome: "Preto (x1)", cor: "black", mult: 1}, {nome: "Marrom (x10)", cor: "brown", mult: 10},
+        {nome: "Vermelho (x100)", cor: "red", mult: 100}, {nome: "Laranja (x1k)", cor: "orange", mult: 1000},
+        {nome: "Amarelo (x10k)", cor: "yellow", mult: 10000}, {nome: "Verde (x100k)", cor: "green", mult: 100000},
+        {nome: "Azul (x1M)", cor: "blue", mult: 1000000}, {nome: "Dourado (x0.1)", cor: "gold", mult: 0.1},
+        {nome: "Prata (x0.01)", cor: "silver", mult: 0.01}
+    ];
 
-    function calcularResistor() {
-        const numFaixas = parseInt(document.getElementById("faixas").value);
-        const faixa1 = parseInt(document.getElementById("faixa1").value);
-        const faixa2 = parseInt(document.getElementById("faixa2").value);
-        const multiplicador = parseInt(document.getElementById("multiplicador").value);
-        const tolerancia = parseInt(document.getElementById("tolerancia").value);
+    const tolerancias = [
+        {nome: "Marrom (±1%)", cor: "brown", valor: 1}, {nome: "Vermelho (±2%)", cor: "red", valor: 2},
+        {nome: "Dourado (±5%)", cor: "gold", valor: 5}, {nome: "Prata (±10%)", cor: "silver", valor: 10}
+    ];
 
-        let faixa3 = 0;
-        if (numFaixas === 5) {
-            faixa3 = parseInt(document.getElementById("faixa3").value);
-        }
+    let modo = 4;
 
-        let valorResistor = 0;
-        let toleranciaValor = tolerancias[tolerancia - 10];
-
-        if (numFaixas === 4) {
-            valorResistor = ((faixa1 * 10) + faixa2) * Math.pow(10, multiplicador);
-        } else if (numFaixas === 5) {
-            valorResistor = ((faixa1 * 100) + (faixa2 * 10) + faixa3) * Math.pow(10, multiplicador);
-        }
-
-        document.getElementById("result").innerHTML = `Valor do resistor: ${valorResistor} ohms com tolerância de ${toleranciaValor}`;
+    function popularSelects() {
+        const preencher = (id, lista, prop) => {
+            const el = document.getElementById(id);
+            lista.forEach(c => {
+                let opt = document.createElement("option");
+                opt.value = c[prop];
+                opt.text = c.nome;
+                opt.dataset.cor = c.cor;
+                el.add(opt);
+            });
+        };
+        preencher('sel-f1', coresDigitais, 'valor');
+        preencher('sel-f2', coresDigitais, 'valor');
+        preencher('sel-f3', coresDigitais, 'valor');
+        preencher('sel-mult', multiplicadores, 'mult');
+        preencher('sel-tol', tolerancias, 'valor');
     }
 
-    document.getElementById("faixas").addEventListener("change", function() {
-        const numFaixas = parseInt(this.value);
-        const faixa3Element = document.getElementById("faixa3");
-        const labelFaixa3 = document.getElementById("labelFaixa3");
+    function toggleModo(m) {
+        modo = m;
+        document.getElementById('campo-f3').classList.toggle('hidden', m === 4);
+        document.getElementById('f5').style.display = (m === 5) ? 'block' : 'none';
+        calcular();
+    }
 
-        if (numFaixas === 5) {
-            faixa3Element.style.display = "block";
-            labelFaixa3.style.display = "block";
+    function calcular() {
+        const v1 = document.getElementById('sel-f1');
+        const v2 = document.getElementById('sel-f2');
+        const v3 = document.getElementById('sel-f3');
+        const vm = document.getElementById('sel-mult');
+        const vt = document.getElementById('sel-tol');
+
+        // Atualizar Cores Visuais
+        document.getElementById('f1').style.backgroundColor = v1.options[v1.selectedIndex].dataset.cor;
+        document.getElementById('f2').style.backgroundColor = v2.options[v2.selectedIndex].dataset.cor;
+        
+        if(modo === 4) {
+            document.getElementById('f3').style.backgroundColor = vm.options[vm.selectedIndex].dataset.cor;
+            document.getElementById('f4').style.backgroundColor = vt.options[vt.selectedIndex].dataset.cor;
+            var resistencia = ((parseInt(v1.value) * 10) + parseInt(v2.value)) * parseFloat(vm.value);
         } else {
-            faixa3Element.style.display = "none";
-            labelFaixa3.style.display = "none";
+            document.getElementById('f3').style.backgroundColor = v3.options[v3.selectedIndex].dataset.cor;
+            document.getElementById('f4').style.backgroundColor = vm.options[vm.selectedIndex].dataset.cor;
+            document.getElementById('f5').style.backgroundColor = vt.options[vt.selectedIndex].dataset.cor;
+            var resistencia = ((parseInt(v1.value) * 100) + (parseInt(v2.value) * 10) + parseInt(v3.value)) * parseFloat(vm.value);
         }
-    });
 
+        // Formatar texto
+        let texto = resistencia >= 1000000 ? (resistencia/1000000).toFixed(2) + " MΩ" : 
+                    resistencia >= 1000 ? (resistencia/1000).toFixed(2) + " kΩ" : 
+                    resistencia.toFixed(1) + " Ω";
+        
+        document.getElementById('resultado').innerText = `${texto} ±${vt.value}%`;
+    }
+
+    popularSelects();
+    calcular();
 </script>
-
 </body>
 </html>

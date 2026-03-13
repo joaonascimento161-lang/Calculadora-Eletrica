@@ -3,13 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Calculadora de Resistor Pro</title>
+    <title>Calculadora de Resistor</title>
     <style>
         :root { --bg-color: #f0f2f5; --resistor-body: #d1b280; }
         body { font-family: sans-serif; background: var(--bg-color); display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; }
         .container { background: white; padding: 2rem; border-radius: 15px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); text-align: center; width: 450px; }
         
-        /* Desenho do Resistor */
         .resistor-display { display: flex; align-items: center; justify-content: center; margin: 30px 0; }
         .fio { width: 40px; height: 6px; background-color: #bbb; }
         .corpo-resistor { width: 200px; height: 60px; background-color: var(--resistor-body); border-radius: 30px; display: flex; justify-content: space-evenly; align-items: center; padding: 0 10px; }
@@ -47,15 +46,15 @@
 
     <div class="controles">
         <div class="campo">
-            <label>1ª Faixa (Dígito)</label>
+            <label>1ª Faixa (Cor)</label>
             <select id="sel-f1" onchange="calcular()"></select>
         </div>
         <div class="campo">
-            <label>2ª Faixa (Dígito)</label>
+            <label>2ª Faixa (Cor)</label>
             <select id="sel-f2" onchange="calcular()"></select>
         </div>
         <div id="campo-f3" class="campo hidden">
-            <label>3ª Faixa (Dígito)</label>
+            <label>3ª Faixa (Cor)</label>
             <select id="sel-f3" onchange="calcular()"></select>
         </div>
         <div class="campo">
@@ -127,7 +126,6 @@
         const vm = document.getElementById('sel-mult');
         const vt = document.getElementById('sel-tol');
 
-        // Atualizar Cores Visuais
         document.getElementById('f1').style.backgroundColor = v1.options[v1.selectedIndex].dataset.cor;
         document.getElementById('f2').style.backgroundColor = v2.options[v2.selectedIndex].dataset.cor;
         
@@ -142,7 +140,6 @@
             var resistencia = ((parseInt(v1.value) * 100) + (parseInt(v2.value) * 10) + parseInt(v3.value)) * parseFloat(vm.value);
         }
 
-        // Formatar texto
         let texto = resistencia >= 1000000 ? (resistencia/1000000).toFixed(2) + " MΩ" : 
                     resistencia >= 1000 ? (resistencia/1000).toFixed(2) + " kΩ" : 
                     resistencia.toFixed(1) + " Ω";

@@ -1,4 +1,6 @@
 /*pedir o nome do eletrodoméstico, se vai usar wat ou kwh, saida nome, kwh por mes , valor em real*/
+function calculadoraConsumo(){
+
 let precoKw = parseFloat(prompt("Digite o preço da sua região do Kwh: ")); // Preço do Kwh em reais.
 let eletrodomestico = prompt("Digite o nome do seu eletrodomestico: ");
 let potencia = Number(prompt("Informe a potência 1 - Watts ou 2 - Kw: "));
@@ -15,3 +17,4 @@ else if(potencia == 2){
 let valorMensal = consumoMensal * precoKw; // Valor a ser pago em reais.
 
 alert("O consumo mensal do seu " + eletrodomestico + " é de " + consumoMensal.toFixed(2) + " Kwh, e o valor a ser pago é de R$ " + valorMensal.toFixed(2));
+}

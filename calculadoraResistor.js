@@ -1,4 +1,5 @@
 //inputs = se é 4 ou 5 faixas,cores das faixas.
+function calculadoraResitor(){
 
 let numFaixas = parseInt(prompt("Digite o número de faixas do resistor (4 ou 5): "));
 let cores = ["Preto", "Marrom", "Vermelho", "Laranja", "Amarelo", "Verde", "Azul", "Violeta", "Cinza", "Branco"];
@@ -28,4 +29,6 @@ else if (numFaixas === 5) {
     alert("O valor do resistor é: " + valorResistor + " ohms com tolerância de " + toleranciaValor);
 } else {
     alert("Número de faixas inválido. Por favor, escolha 4 ou 5 faixas.");
+    
+    }
 }

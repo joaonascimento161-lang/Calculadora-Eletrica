@@ -3,152 +3,205 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Calculadora de Resistor</title>
+    <title>Multi-Calculadora Eletrônica</title>
     <style>
-        :root { --bg-color: #f0f2f5; --resistor-body: #d1b280; }
-        body { font-family: sans-serif; background: var(--bg-color); display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; }
-        .container { background: white; padding: 2rem; border-radius: 15px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); text-align: center; width: 450px; }
+        :root { 
+            --bg-color: #f0f2f5; 
+            --resistor-body: #d1b280; 
+            --primary: #2563eb; 
+            --dark: #1e293b;
+        }
         
-        .resistor-display { display: flex; align-items: center; justify-content: center; margin: 30px 0; }
-        .fio { width: 40px; height: 6px; background-color: #bbb; }
-        .corpo-resistor { width: 200px; height: 60px; background-color: var(--resistor-body); border-radius: 30px; display: flex; justify-content: space-evenly; align-items: center; padding: 0 10px; }
-        .faixa { width: 12px; height: 100%; transition: all 0.3s; }
+        body { font-family: 'Segoe UI', sans-serif; background: var(--bg-color); margin: 0; padding: 20px; display: flex; justify-content: center; }
         
-        .controles { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; text-align: left; margin-top: 20px; }
-        .campo { display: flex; flex-direction: column; }
+        .container { background: white; padding: 2rem; border-radius: 15px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); width: 100%; max-width: 450px; position: relative; }
+
+        .menu-container { position: absolute; top: 20px; left: 20px; z-index: 100; }
+        .hamburger { cursor: pointer; display: flex; flex-direction: column; gap: 5px; padding: 10px; background: #eee; border-radius: 5px; }
+        .hamburger div { width: 25px; height: 3px; background-color: var(--dark); border-radius: 2px; }
+        
+        .menu-dropdown { 
+            display: none; position: absolute; top: 45px; left: 0; 
+            background: white; box-shadow: 0 5px 15px rgba(0,0,0,0.2); 
+            border-radius: 8px; overflow: hidden; width: 200px;
+        }
+        .menu-dropdown.show { display: block; }
+        .menu-item { padding: 12px 15px; cursor: pointer; transition: 0.2s; border-bottom: 1px solid #eee; font-size: 14px; color: var(--dark); }
+        .menu-item:hover { background: #f8fafc; color: var(--primary); }
+
+        h1 { font-size: 1.4rem; margin-top: 40px; color: var(--dark); }
+        
         .hidden { display: none; }
+        .controles { display: flex; flex-direction: column; gap: 15px; text-align: left; margin-top: 20px; }
+        .campo { display: flex; flex-direction: column; }
+        label { font-size: 0.9rem; font-weight: bold; margin-bottom: 5px; color: #444; }
+        select, input { padding: 10px; border-radius: 6px; border: 1px solid #ccc; font-size: 1rem; }
         
-        .resultado-box { margin-top: 25px; padding: 15px; background: #eef2ff; border-radius: 10px; font-weight: bold; font-size: 1.2rem; color: #2563eb; }
-        select { padding: 8px; border-radius: 5px; border: 1px solid #ccc; margin-top: 5px; }
-        .tab-selector { margin-bottom: 20px; }
+        .resultado-box { 
+            margin-top: 25px; padding: 20px; background: #eef2ff; 
+            border-radius: 10px; font-weight: bold; font-size: 1.1rem; 
+            color: var(--primary); text-align: center; border: 1px solid #d0d7de;
+        }
+
+        .resistor-display { display: flex; align-items: center; justify-content: center; margin: 20px 0; }
+        .fio { width: 30px; height: 6px; background-color: #bbb; }
+        .corpo-resistor { width: 180px; height: 50px; background-color: var(--resistor-body); border-radius: 25px; display: flex; justify-content: space-evenly; align-items: center; padding: 0 10px; }
+        .faixa { width: 10px; height: 100%; transition: 0.3s; }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <h1>Calculadora de Resistor</h1>
-
-    <div class="tab-selector">
-        <label><input type="radio" name="tipo" value="4" checked onclick="toggleModo(4)"> 4 Faixas</label>
-        <label style="margin-left: 20px;"><input type="radio" name="tipo" value="5" onclick="toggleModo(5)"> 5 Faixas</label>
-    </div>
-    
-    <div class="resistor-display">
-        <div class="fio"></div>
-        <div id="corpo" class="corpo-resistor">
-            <div id="f1" class="faixa"></div>
-            <div id="f2" class="faixa"></div>
-            <div id="f3" class="faixa"></div> <div id="f4" class="faixa"></div>
-            <div id="f5" class="faixa" style="display:none"></div>
+    <div class="menu-container">
+        <div class="hamburger" onclick="toggleMenu()">
+            <div></div><div></div><div></div>
         </div>
-        <div class="fio"></div>
-    </div>
-
-    <div class="controles">
-        <div class="campo">
-            <label>1ª Faixa (Cor)</label>
-            <select id="sel-f1" onchange="calcular()"></select>
-        </div>
-        <div class="campo">
-            <label>2ª Faixa (Cor)</label>
-            <select id="sel-f2" onchange="calcular()"></select>
-        </div>
-        <div id="campo-f3" class="campo hidden">
-            <label>3ª Faixa (Cor)</label>
-            <select id="sel-f3" onchange="calcular()"></select>
-        </div>
-        <div class="campo">
-            <label>Multiplicador</label>
-            <select id="sel-mult" onchange="calcular()"></select>
-        </div>
-        <div class="campo">
-            <label>Tolerância</label>
-            <select id="sel-tol" onchange="calcular()"></select>
+        <div id="dropdown" class="menu-dropdown">
+            <div class="menu-item" onclick="abrirCalc('resistor')">🎨 Resistor</div>
+            <div class="menu-item" onclick="abrirCalc('conversor')">📏 Conversor de Unidades</div>
+            <div class="menu-item" onclick="abrirCalc('consumo')">⚡ Consumo de Energia</div>
         </div>
     </div>
 
-    <div class="resultado-box" id="resultado">--- Ω</div>
+    <h1 id="titulo-calc">Calculadora de Resistor</h1>
+
+    <div id="secao-resistor">
+        <div style="margin: 15px 0;">
+            <label><input type="radio" name="tipo" value="4" checked onclick="mudarModoResistor(4)"> 4 Faixas</label>
+            <label style="margin-left: 15px;"><input type="radio" name="tipo" value="5" onclick="mudarModoResistor(5)"> 5 Faixas</label>
+        </div>
+        <div class="resistor-display">
+            <div class="fio"></div>
+            <div class="corpo-resistor">
+                <div id="f1" class="faixa"></div><div id="f2" class="faixa"></div>
+                <div id="f3" class="faixa"></div><div id="f4" class="faixa"></div>
+                <div id="f5" class="faixa" style="display:none"></div>
+            </div>
+            <div class="fio"></div>
+        </div>
+        <div class="controles">
+            <div class="campo"><label>1ª Faixa</label><select id="sel-f1" onchange="calcRes()"></select></div>
+            <div class="campo"><label>2ª Faixa</label><select id="sel-f2" onchange="calcRes()"></select></div>
+            <div id="campo-f3" class="campo hidden"><label>3ª Faixa</label><select id="sel-f3" onchange="calcRes()"></select></div>
+            <div class="campo"><label>Multiplicador</label><select id="sel-mult" onchange="calcRes()"></select></div>
+            <div class="campo"><label>Tolerância</label><select id="sel-tol" onchange="calcRes()"></select></div>
+        </div>
+        <div class="resultado-box" id="res-resistor">--- Ω</div>
+    </div>
+
+    <div id="secao-conversor" class="hidden">
+        <div class="controles">
+            <div class="campo"><label>Valor:</label><input type="number" id="c-val" oninput="calcConv()"></div>
+            <div class="campo"><label>De:</label><select id="c-de" onchange="calcConv()"></select></div>
+            <div class="campo"><label>Para:</label><select id="c-para" onchange="calcConv()"></select></div>
+        </div>
+        <div class="resultado-box" id="res-conversor">0</div>
+    </div>
+
+    <div id="secao-consumo" class="hidden">
+        <div class="controles">
+            <div class="campo"><label>Preço do kWh (R$):</label><input type="number" id="con-preco" value="0.70" oninput="calcConsumo()"></div>
+            <div class="campo"><label>Eletrodoméstico:</label><input type="text" id="con-nome" placeholder="Ex: Geladeira" oninput="calcConsumo()"></div>
+            <div class="campo">
+                <label>Potência:</label>
+                <div style="display:flex; gap:10px;">
+                    <input type="number" id="con-pot" placeholder="Valor" style="flex:1" oninput="calcConsumo()">
+                    <select id="con-un-pot" onchange="calcConsumo()">
+                        <option value="W">Watts</option>
+                        <option value="kW">kW</option>
+                    </select>
+                </div>
+            </div>
+            <div class="campo"><label>Horas de uso por dia:</label><input type="number" id="con-tempo" oninput="calcConsumo()"></div>
+        </div>
+        <div class="resultado-box" id="res-consumo">Preencha os dados...</div>
+    </div>
 </div>
 
 <script>
-    const coresDigitais = [
-        {nome: "Preto", cor: "black", valor: 0}, {nome: "Marrom", cor: "brown", valor: 1},
-        {nome: "Vermelho", cor: "red", valor: 2}, {nome: "Laranja", cor: "orange", valor: 3},
-        {nome: "Amarelo", cor: "yellow", valor: 4}, {nome: "Verde", cor: "green", valor: 5},
-        {nome: "Azul", cor: "blue", valor: 6}, {nome: "Violeta", cor: "violet", valor: 7},
-        {nome: "Cinza", cor: "gray", valor: 8}, {nome: "Branco", cor: "white", valor: 9}
-    ];
+    function toggleMenu() { document.getElementById('dropdown').classList.toggle('show'); }
 
-    const multiplicadores = [
-        {nome: "Preto (x1)", cor: "black", mult: 1}, {nome: "Marrom (x10)", cor: "brown", mult: 10},
-        {nome: "Vermelho (x100)", cor: "red", mult: 100}, {nome: "Laranja (x1k)", cor: "orange", mult: 1000},
-        {nome: "Amarelo (x10k)", cor: "yellow", mult: 10000}, {nome: "Verde (x100k)", cor: "green", mult: 100000},
-        {nome: "Azul (x1M)", cor: "blue", mult: 1000000}, {nome: "Dourado (x0.1)", cor: "gold", mult: 0.1},
-        {nome: "Prata (x0.01)", cor: "silver", mult: 0.01}
-    ];
+    function abrirCalc(tipo) {
+        document.getElementById('secao-resistor').classList.toggle('hidden', tipo !== 'resistor');
+        document.getElementById('secao-conversor').classList.toggle('hidden', tipo !== 'conversor');
+        document.getElementById('secao-consumo').classList.toggle('hidden', tipo !== 'consumo');
+        
+        const titulos = {resistor: 'Calculadora de Resistor', conversor: 'Conversor de Unidades', consumo: 'Consumo de Energia'};
+        document.getElementById('titulo-calc').innerText = titulos[tipo];
+        toggleMenu();
+    }
 
-    const tolerancias = [
-        {nome: "Marrom (±1%)", cor: "brown", valor: 1}, {nome: "Vermelho (±2%)", cor: "red", valor: 2},
-        {nome: "Dourado (±5%)", cor: "gold", valor: 5}, {nome: "Prata (±10%)", cor: "silver", valor: 10}
-    ];
+    function calcConsumo() {
+        const preco = parseFloat(document.getElementById('con-preco').value) || 0;
+        const nome = document.getElementById('con-nome').value || "aparelho";
+        const pot = parseFloat(document.getElementById('con-pot').value) || 0;
+        const un = document.getElementById('con-un-pot').value;
+        const tempo = parseFloat(document.getElementById('con-tempo').value) || 0;
 
-    let modo = 4;
+        let kwhMensal = (un === "W") ? (pot * tempo * 30) / 1000 : (pot * tempo * 30);
+        let custo = kwhMensal * preco;
 
-    function popularSelects() {
-        const preencher = (id, lista, prop) => {
+        if(pot > 0 && tempo > 0) {
+            document.getElementById('res-consumo').innerHTML = 
+                `O ${nome} consome <b>${kwhMensal.toFixed(2)} kWh</b>/mês.<br>` +
+                `<span style="color: green">Custo: R$ ${custo.toFixed(2)}</span>`;
+        }
+    }
+
+    const cores = [{n: "Preto", c: "black", v: 0}, {n: "Marrom", c: "brown", v: 1}, {n: "Vermelho", c: "red", v: 2}, {n: "Laranja", c: "orange", v: 3}, {n: "Amarelo", c: "yellow", v: 4}, {n: "Verde", c: "green", v: 5}, {n: "Azul", c: "blue", v: 6}, {n: "Violeta", c: "violet", v: 7}, {n: "Cinza", c: "gray", v: 8}, {n: "Branco", c: "white", v: 9}];
+    const mults = [{n: "Preto (x1)", c: "black", m: 1}, {n: "Marrom (x10)", c: "brown", m: 10}, {n: "Vermelho (x100)", c: "red", m: 100}, {n: "Laranja (x1k)", c: "orange", m: 1000}, {n: "Amarelo (x10k)", c: "yellow", m: 10000}, {n: "Verde (x100k)", c: "green", m: 100000}, {n: "Azul (x1M)", c: "blue", m: 1000000}, {n: "Dourado (x0.1)", c: "gold", m: 0.1}, {n: "Prata (x0.01)", c: "silver", m: 0.01}];
+    const tols = [{n: "Dourado (5%)", c: "gold", v: 5}, {n: "Prata (10%)", c: "silver", v: 10}, {n: "Marrom (1%)", c: "brown", v: 1}, {n: "Vermelho (2%)", c: "red", v: 2}];
+
+    let modoR = 4;
+    function popular() {
+        const pre = (id, lista, val) => {
             const el = document.getElementById(id);
-            lista.forEach(c => {
-                let opt = document.createElement("option");
-                opt.value = c[prop];
-                opt.text = c.nome;
-                opt.dataset.cor = c.cor;
-                el.add(opt);
+            lista.forEach(i => {
+                let o = document.createElement("option"); o.value = i[val]; o.text = i.n; o.dataset.cor = i.c; el.add(o);
             });
         };
-        preencher('sel-f1', coresDigitais, 'valor');
-        preencher('sel-f2', coresDigitais, 'valor');
-        preencher('sel-f3', coresDigitais, 'valor');
-        preencher('sel-mult', multiplicadores, 'mult');
-        preencher('sel-tol', tolerancias, 'valor');
+        pre('sel-f1', cores, 'v'); pre('sel-f2', cores, 'v'); pre('sel-f3', cores, 'v'); pre('sel-mult', mults, 'm'); pre('sel-tol', tols, 'v');
+        
+        const units = [{n:"Giga", f:1e9}, {n:"Mega", f:1e6}, {n:"Kilo", f:1e3}, {n:"Unidade", f:1}, {n:"Milli", f:1e-3}, {n:"Micro", f:1e-6}, {n:"Nano", f:1e-9}];
+        const cDe = document.getElementById('c-de'), cPara = document.getElementById('c-para');
+        units.forEach(u => {
+            cDe.add(new Option(u.n, u.f)); cPara.add(new Option(u.n, u.f));
+        });
     }
 
-    function toggleModo(m) {
-        modo = m;
+    function mudarModoResistor(m) {
+        modoR = m;
         document.getElementById('campo-f3').classList.toggle('hidden', m === 4);
         document.getElementById('f5').style.display = (m === 5) ? 'block' : 'none';
-        calcular();
+        calcRes();
     }
 
-    function calcular() {
-        const v1 = document.getElementById('sel-f1');
-        const v2 = document.getElementById('sel-f2');
-        const v3 = document.getElementById('sel-f3');
-        const vm = document.getElementById('sel-mult');
-        const vt = document.getElementById('sel-tol');
-
-        document.getElementById('f1').style.backgroundColor = v1.options[v1.selectedIndex].dataset.cor;
-        document.getElementById('f2').style.backgroundColor = v2.options[v2.selectedIndex].dataset.cor;
-        
-        if(modo === 4) {
-            document.getElementById('f3').style.backgroundColor = vm.options[vm.selectedIndex].dataset.cor;
-            document.getElementById('f4').style.backgroundColor = vt.options[vt.selectedIndex].dataset.cor;
-            var resistencia = ((parseInt(v1.value) * 10) + parseInt(v2.value)) * parseFloat(vm.value);
+    function calcRes() {
+        const s1 = document.getElementById('sel-f1'), s2 = document.getElementById('sel-f2'), s3 = document.getElementById('sel-f3'), sm = document.getElementById('sel-mult'), st = document.getElementById('sel-tol');
+        document.getElementById('f1').style.backgroundColor = s1.options[s1.selectedIndex].dataset.cor;
+        document.getElementById('f2').style.backgroundColor = s2.options[s2.selectedIndex].dataset.cor;
+        let res = 0;
+        if(modoR === 4) {
+            document.getElementById('f3').style.backgroundColor = sm.options[sm.selectedIndex].dataset.cor;
+            document.getElementById('f4').style.backgroundColor = st.options[st.selectedIndex].dataset.cor;
+            res = (parseInt(s1.value)*10 + parseInt(s2.value)) * parseFloat(sm.value);
         } else {
-            document.getElementById('f3').style.backgroundColor = v3.options[v3.selectedIndex].dataset.cor;
-            document.getElementById('f4').style.backgroundColor = vm.options[vm.selectedIndex].dataset.cor;
-            document.getElementById('f5').style.backgroundColor = vt.options[vt.selectedIndex].dataset.cor;
-            var resistencia = ((parseInt(v1.value) * 100) + (parseInt(v2.value) * 10) + parseInt(v3.value)) * parseFloat(vm.value);
+            document.getElementById('f3').style.backgroundColor = s3.options[s3.selectedIndex].dataset.cor;
+            document.getElementById('f4').style.backgroundColor = sm.options[sm.selectedIndex].dataset.cor;
+            document.getElementById('f5').style.backgroundColor = st.options[st.selectedIndex].dataset.cor;
+            res = (parseInt(s1.value)*100 + parseInt(s2.value)*10 + parseInt(s3.value)) * parseFloat(sm.value);
         }
-
-        let texto = resistencia >= 1000000 ? (resistencia/1000000).toFixed(2) + " MΩ" : 
-                    resistencia >= 1000 ? (resistencia/1000).toFixed(2) + " kΩ" : 
-                    resistencia.toFixed(1) + " Ω";
-        
-        document.getElementById('resultado').innerText = `${texto} ±${vt.value}%`;
+        let txt = res >= 1e6 ? (res/1e6).toFixed(2)+" MΩ" : res >= 1e3 ? (res/1e3).toFixed(2)+" kΩ" : res.toFixed(1)+" Ω";
+        document.getElementById('res-resistor').innerText = txt + " ±" + st.value + "%";
     }
 
-    popularSelects();
-    calcular();
+    function calcConv() {
+        const v = parseFloat(document.getElementById('c-val').value) || 0;
+        const resultado = v * (parseFloat(document.getElementById('c-de').value) / parseFloat(document.getElementById('c-para').value));
+        document.getElementById('res-conversor').innerText = resultado.toLocaleString();
+    }
+
+    popular(); calcRes();
 </script>
 </body>
 </html>
